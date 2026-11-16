@@ -4,7 +4,7 @@
 
 ## 使用方式
 
-- 線上版：由本儲存庫的 GitHub Pages 網址開啟。
+- 線上版：[開啟夜宴地圖](https://haru2017055.github.io/yeyan-map/)；[直接開啟赤月計算機](https://haru2017055.github.io/yeyan-map/#calculator)。
 - 離線版：下載完整專案，解壓縮後使用 Chrome 或 Edge 開啟 `index.html`。
 - 上方可切換「夜宴地圖」與「赤月計算機」。
 
