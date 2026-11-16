@@ -1,0 +1,21 @@
+# Local credentials and editor files
+.env
+.env.*
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local data, generated exports, and test output
+*.log
+*.tmp
+*.bak
+*.zip
+*points*.json
+*backup*.json
+node_modules/
+outputs/
+test-results/
+playwright-report/

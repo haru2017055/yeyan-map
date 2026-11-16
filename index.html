@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#150b0d">
+  <title>夜宴｜MochiRP 地圖</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="stylesheet" href="assets/leaflet.css">
+  <style>
+    :root { color-scheme: dark; --bg:#150b0d; --panel:#1d1013; --line:#46252c; --accent:#ff7d87; --text:#f8ecee; --muted:#c4a2a8; --highlight:#ef596b; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:"Segoe UI","Microsoft JhengHei",sans-serif; }
+    button,input,textarea { font:inherit; }
+    button { cursor:pointer; color:var(--text); }
+    button:disabled { opacity:.45; cursor:wait; }
+    button:focus-visible,input:focus-visible,a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+    .app { height:100vh; height:100dvh; display:flex; flex-direction:column; }
+    .header { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:12px 28px; border-bottom:1px solid #74313c; background:linear-gradient(110deg,#361219,#150b0d 70%); }
+    .brand { display:flex; align-items:center; gap:17px; }
+    .brand-logo { width:76px; height:76px; object-fit:contain; flex-shrink:0; filter:drop-shadow(0 0 12px #bd192338); }
+    h1 { margin:0; font-size:27px; font-weight:600; letter-spacing:9px; line-height:1.2; }
+    .subtitle { margin:7px 0 0; color:var(--muted); font-size:10px; letter-spacing:2px; }
+    .edition { color:var(--accent); font-size:12px; letter-spacing:3px; white-space:nowrap; }
+    .edition::before { content:""; display:inline-block; width:5px; height:5px; margin-right:12px; border-radius:50%; background:var(--accent); }
+    .workspace { display:grid; grid-template-columns:268px minmax(0,1fr); flex:1; min-height:0; }
+    .sidebar { background:var(--panel); display:flex; flex-direction:column; min-height:0; min-width:0; border-right:1px solid var(--line); }
+    .sidebar-head { padding:24px 20px 15px; }
+    .eyebrow { margin:0 0 18px; color:var(--accent); font-size:10px; letter-spacing:3px; }
+    .index-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    h2 { font-size:17px; font-weight:500; margin:0; letter-spacing:2px; }
+    .count { font-size:11px; color:var(--muted); }
+    .search-label { display:block; font-size:12px; color:var(--muted); margin-bottom:8px; }
+    input { width:100%; padding:11px 12px; border:1px solid #62333f; background:#11090b; color:var(--text); border-radius:6px; font-size:13px; }
+    input::placeholder { color:#ac858e; }
+    .results { overflow:auto; flex:1; min-height:0; padding:0 10px 12px; scrollbar-color:#763745 transparent; scrollbar-width:thin; }
+    .place { width:100%; display:flex; align-items:center; gap:12px; text-align:left; background:transparent; border:1px solid transparent; border-radius:5px; padding:12px 10px; font-size:13px; transition:background .15s; }
+    .place:hover { background:#371920; }
+    .place.active { color:var(--accent); background:#4c1b26; border-color:#a24051; }
+    .place-number { color:#b08b94; font-size:10px; font-variant-numeric:tabular-nums; width:22px; flex-shrink:0; }
+    .place.active .place-number { color:var(--accent); }
+    .place-name { flex:1; overflow-wrap:anywhere; }
+    .place-arrow { color:#dc8494; }
+    .empty { margin:8px 10px; color:var(--muted); font-size:13px; line-height:1.8; }
+    .sidebar-foot { margin:0; padding:15px 20px; border-top:1px solid var(--line); color:var(--muted); font-size:11px; line-height:1.9; }
+    .map-section { display:flex; flex-direction:column; min-height:0; min-width:0; }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 20px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+    .map-title { font-size:13px; letter-spacing:2px; margin:0; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .action { background:#32151c; border:1px solid #7a3443; padding:8px 12px; font-size:12px; border-radius:5px; }
+    .action:hover { border-color:var(--highlight); background:#591c29; }
+    .action[aria-pressed="true"] { background:#891f34; border-color:#ee596f; color:#fff0f2; }
+    .action.primary { background:#a62039; border-color:#ef596b; color:#fff; }
+    .action.yellow { background:#4d3b14; border-color:#b69434; color:#ffe38b; }
+    .action.green { background:#143c2b; border-color:#389d70; color:#a7f3ce; }
+    .data-tools { display:flex; gap:8px; margin-top:10px; }
+    .data-tools .action { flex:1; }
+    .storage-note { color:var(--muted); font-size:11px; line-height:1.7; margin:9px 0 0; }
+    .storage-note.warning { color:#ffc58a; }
+    .custom-tag { color:var(--accent); font-size:10px; white-space:nowrap; }
+    .map-section.placing #map { cursor:crosshair; }
+    .place-banner { position:absolute; top:12px; left:54px; right:12px; z-index:1000; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 12px; color:#fff0f2; background:#581525f5; border:1px solid #ef596b; border-radius:6px; box-shadow:0 5px 18px #0006; font-size:12px; }
+    .place-banner .action { flex:none; white-space:nowrap; }
+    .point-kind { margin:14px 0 0; font-size:12px; color:var(--muted); }
+    .popup-title { display:block; overflow-wrap:anywhere; }
+    .popup-note { font-size:12px; font-weight:400; line-height:1.7; white-space:pre-wrap; overflow-wrap:anywhere; text-align:left; max-width:240px; margin:10px 0; }
+    .popup-actions { display:flex; gap:8px; margin-top:12px; }
+    .popup-actions .action { flex:1; }
+    dialog { width:min(430px,calc(100% - 28px)); max-height:calc(100dvh - 32px); overflow:auto; color:var(--text); background:#241016; border:1px solid #a33d53; border-radius:12px; padding:24px; box-shadow:0 20px 100px #0009; }
+    dialog::backdrop { background:#090305b8; }
+    dialog h2 { margin-bottom:8px; font-size:20px; }
+    .form-help { color:var(--muted); font-size:12px; line-height:1.7; margin:0 0 18px; }
+    .field-label { display:block; color:#f0c1ca; font-size:12px; margin:14px 0 7px; }
+    textarea { width:100%; min-height:88px; resize:vertical; border:1px solid #62333f; background:#11090b; color:var(--text); border-radius:6px; padding:10px 12px; }
+    textarea:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+    input[type="color"] { height:42px; padding:4px; cursor:pointer; }
+    .form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
+    .form-error { margin:12px 0 0; font-size:12px; line-height:1.7; color:#ffb3c0; }
+    .delete-warning { color:#f5d2d9; font-size:14px; line-height:1.8; overflow-wrap:anywhere; }
+    .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); z-index:2000; max-width:calc(100% - 28px); padding:12px 18px; border:1px solid #ad4158; border-radius:8px; background:#3d1220; color:#fff1f4; box-shadow:0 8px 24px #0008; font-size:13px; }
+    .map-frame { position:relative; flex:1; min-height:0; isolation:isolate; background:#130b0d; }
+    #map { width:100%; height:100%; background:#130b0d; font-family:inherit; }
+    .map-status { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:#150b0df5; padding:24px; text-align:center; z-index:1100; }
+    [hidden] { display:none !important; }
+    .map-status p { margin:0; color:var(--muted); font-size:14px; line-height:1.8; }
+    .map-status strong { color:var(--accent); font-weight:500; font-size:20px; letter-spacing:3px; }
+    .legend { position:absolute; left:16px; bottom:27px; z-index:800; display:flex; align-items:center; gap:8px; padding:8px 12px; background:#200d13e8; border:1px solid #874050; border-radius:5px; pointer-events:none; font-size:11px; color:#f3d7dd; }
+    .legend-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); }
+    .marker-dot { width:13px; height:13px; border:2px solid #ffe7eb; border-radius:50%; background:#e7314a; box-shadow:0 2px 6px #000b,0 0 0 4px #a31a2e35; transition:transform .15s; }
+    .map-label { display:none; border:1px solid #d75970; background:#300d19f2; color:#fff1f3; font-size:13px; padding:6px 10px; border-radius:5px; box-shadow:0 3px 12px #0006; }
+    .show-labels .map-label,.map-label.is-hovered { display:block; }
+    .leaflet-tooltip-top::before { border-top-color:#d75970; }
+    .leaflet-popup-content-wrapper,.leaflet-popup-tip { background:#3c1220; color:#fff0f2; }
+    .leaflet-popup-content { font-size:16px; font-weight:600; margin:16px 22px; text-align:center; }
+    .leaflet-container a.leaflet-popup-close-button { color:#ecadbb; }
+    .leaflet-bar { border:1px solid #ae4257 !important; box-shadow:0 4px 16px #0005; }
+    .leaflet-bar a { background:#39131f; color:#f9e1e7; border-bottom:1px solid #813448; }
+    .leaflet-bar a:hover { background:#6b2034; color:white; }
+    .leaflet-bar a.leaflet-disabled { background:#2f151c; color:#b07787; }
+    .leaflet-container .leaflet-control-attribution { background:#240e17e6; color:#c49aa6; font-size:10px; }
+    .leaflet-control-attribution a { color:#f2b5c2; }
+    @media(max-width:760px) {
+      .header { padding:14px 16px; gap:12px; }
+      .brand { gap:12px; }
+      h1 { font-size:23px; }
+      .brand-logo { width:54px; height:54px; }
+      .edition { font-size:10px; letter-spacing:1px; }
+      .edition::before { margin-right:6px; }
+      .subtitle { font-size:8px; letter-spacing:1.5px; }
+      .workspace { grid-template-columns:minmax(0,1fr); grid-template-rows:232px minmax(0,1fr); }
+      .sidebar { border-right:0; border-bottom:1px solid var(--line); }
+      .sidebar-head { padding:12px 16px 8px; }
+      .eyebrow,.sidebar-foot,.search-label { display:none; }
+      .index-heading { margin-bottom:8px; }
+      h2 { font-size:13px; }
+      input { padding:9px 10px; }
+      .results { display:flex; align-items:flex-start; gap:6px; padding:0 16px 10px; overflow-x:auto; overflow-y:hidden; }
+      .place { width:auto; flex:0 0 auto; padding:10px; border-color:#743240; font-size:12px; }
+      .place-number,.place-arrow { display:none; }
+      .toolbar { padding:10px 12px; }
+      .map-title { display:none; }
+      .actions { width:100%; }
+      .action { flex:1; padding:8px 5px; }
+      .actions .action { flex:1 1 28%; }
+      .transfer-tools { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+      .transfer-tools .data-tools { gap:5px; }
+      .legend { left:10px; bottom:24px; font-size:10px; }
+    }
+    @media(max-width:360px) { .edition { display:none; } }
+    @media(max-height:520px) { .app { min-height:520px; } }
+    @media(prefers-reduced-motion:reduce) { * { transition:none !important; } }
+  </style>
+  <link rel="stylesheet" href="calculator.css">
+  <script src="assets/leaflet.js" defer></script>
+  <script src="landmarks.js" defer></script>
+  <script src="map.js" defer></script>
+  <script src="calculator.js" defer></script>
+  <script src="app-tabs.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="brand"><img class="brand-logo" src="assets/logo.png" alt="夜宴 Logo" width="76" height="76"><div><h1>夜宴</h1><p class="subtitle">MOCHIRP / LOS SANTOS MAP</p></div></div>
+      <div class="edition" id="appEdition">黑幫專用地圖</div>
+    </header>
+    <nav class="app-tabs" role="tablist" aria-label="夜宴工具分頁">
+      <button id="tab-map" class="app-tab" type="button" role="tab" aria-controls="map-panel" aria-selected="true" tabindex="0">夜宴地圖</button>
+      <button id="tab-calculator" class="app-tab" type="button" role="tab" aria-controls="calculator-panel" aria-selected="false" tabindex="-1">赤月計算機</button>
+    </nav>
+    <main class="workspace" id="map-panel" role="tabpanel" aria-labelledby="tab-map">
+      <aside class="sidebar" aria-label="地標搜尋與索引">
+        <div class="sidebar-head">
+          <p class="eyebrow">THE CITY AFTER DARK</p>
+          <div class="index-heading"><h2>地標索引</h2><span class="count" id="count" role="status"></span></div>
+          <label class="search-label" for="search">搜尋地點</label>
+          <input id="search" type="search" placeholder="搜尋名稱，例如：賭場" autocomplete="off" aria-label="搜尋地點">
+          <div class="transfer-tools">
+            <div class="data-tools"><button class="action yellow" id="importPoints" type="button" disabled>匯入黃點</button><button class="action yellow" id="exportPoints" type="button" disabled>匯出黃點</button></div>
+            <div class="data-tools"><button class="action green" id="importGreen" type="button" disabled>匯入綠點</button><button class="action green" id="exportGreen" type="button" disabled>匯出綠點</button></div>
+          </div>
+          <input id="importFile" type="file" accept=".json,application/json" hidden>
+          <input id="importGreenFile" type="file" accept=".json,application/json" hidden>
+          <p class="storage-note" id="storageStatus" role="status">黃點、綠點各自儲存與分享，互不影響。</p>
+        </div>
+        <div class="results" id="results" aria-label="地標列表"></div>
+        <p class="sidebar-foot">點選地標，快速定位。<br>滾輪縮放 · 拖曳移動 · 點擊查看地名</p>
+      </aside>
+      <section class="map-section" aria-label="洛聖都互動地圖">
+        <div class="toolbar">
+          <p class="map-title">洛聖都 · 城市全覽</p>
+          <div class="actions">
+            <button class="action primary" id="addPoint" type="button" aria-pressed="false" disabled>＋新增地標</button>
+            <button class="action yellow" id="addYellow" type="button" aria-pressed="false" disabled>＋新增黃點</button>
+            <button class="action green" id="addGreen" type="button" aria-pressed="false" disabled>＋新增綠點</button>
+            <button class="action" id="city" type="button" disabled>市區視角</button>
+            <button class="action" id="overview" type="button" disabled>完整地圖</button>
+            <button class="action" id="labels" type="button" aria-pressed="false" disabled>顯示地名</button>
+          </div>
+        </div>
+        <div class="map-frame">
+          <div id="map" aria-label="可拖曳與縮放的洛聖都地圖"></div>
+          <div class="place-banner" id="placeBanner" hidden><span>點選地圖上的位置，即可新增地標。</span><button class="action" id="cancelPlacement" type="button">取消</button></div>
+          <div class="map-status" id="mapStatus" role="status"><strong>夜宴地圖</strong><p id="statusText">正在載入城市地圖…</p><button id="retry" class="action" type="button" hidden>重新載入</button></div>
+          <div class="legend"><span class="legend-dot"></span>一般地標 <span class="legend-dot" style="background:#ffd34d"></span>黃色分享點 <span class="legend-dot" style="background:#3ddc84"></span>綠色分享點</div>
+        </div>
+      </section>
+    </main>
+    <section id="calculator-panel" class="calculator-panel" role="tabpanel" aria-labelledby="tab-calculator" hidden>
+      <div class="calc-content">
+        <header class="calc-heading">
+          <div><p class="calc-eyebrow">LUNA ROSSA · 夜宴赤月餐廳</p><h2>赤月計算機</h2><p class="calc-caption">選擇餐點、調整數量，即時計算客人應付金額。</p></div>
+          <button id="calcJumpOrder" class="calc-jump" type="button">查看點單 <span id="calcMobileTotal">$0</span></button>
+        </header>
+        <div class="calc-layout">
+          <div id="calcMenu" class="calc-menu" aria-label="赤月餐廳菜單"></div>
+          <aside id="calcReceipt" class="calc-receipt" aria-labelledby="calcReceiptTitle">
+            <div class="calc-receipt-heading"><h3 id="calcReceiptTitle">本次點單</h3><span id="calcItemCount">共 0 件</span></div>
+            <div id="calcOrderRows"></div>
+            <p id="calcEmpty" class="calc-empty">尚未加入品項</p>
+            <p id="calcQuantityError" class="calc-error" role="alert" hidden></p>
+            <div class="calc-total"><span>應收總額</span><output id="calcTotal" aria-live="polite">$0</output></div>
+            <button id="calcCopy" class="calc-primary" type="button" disabled>複製點單明細</button>
+            <button id="calcNewOrder" class="calc-secondary" type="button" disabled>開始新單</button>
+            <p id="calcNotice" class="calc-notice" role="status">本單會保留在此瀏覽器，切換分頁不會清空。</p>
+            <button id="calcReloadOrder" class="calc-secondary" type="button" hidden>載入最新訂單</button>
+            <p id="calcCopyStatus" class="calc-notice" role="status" hidden></p>
+            <label id="calcCopyLabel" class="calc-copy-label" for="calcCopyText" hidden>點單明細（可手動複製）</label>
+            <textarea id="calcCopyText" class="calc-copy-text" readonly hidden></textarea>
+          </aside>
+        </div>
+        <footer class="calc-footer">食品 $180 · 飲料 $160 · 酒品 $150</footer>
+      </div>
+    </section>
+  </div>
+  <dialog id="pointDialog" aria-labelledby="pointDialogTitle">
+    <form id="pointForm">
+      <h2 id="pointDialogTitle">新增地標</h2>
+      <p class="form-help">變更儲存於此瀏覽器；黃點與綠點可各自匯出分享。</p>
+      <label class="field-label" for="pointName">地標名稱（必填）</label><input id="pointName" maxlength="60" required autocomplete="off" placeholder="例如：夜宴集合點">
+      <label class="field-label" for="pointNote">備註（選填）</label><textarea id="pointNote" maxlength="500" placeholder="填寫地點說明…"></textarea>
+      <p class="point-kind" id="pointKind"></p>
+      <label class="field-label" for="pointRadius">範圍大小（0 表示不顯示）</label><input id="pointRadius" type="number" min="0" max="1000" step="1" value="50" required>
+      <p class="form-error" id="pointError" role="alert" hidden></p>
+      <div class="form-actions"><button class="action" id="cancelPoint" type="button">取消</button><button class="action primary" type="submit">儲存地標</button></div>
+    </form>
+  </dialog>
+  <dialog id="deleteDialog" aria-labelledby="deleteTitle">
+    <h2 id="deleteTitle">刪除地標</h2><p class="delete-warning" id="deleteMessage"></p>
+    <p class="form-error" id="deleteError" role="alert" hidden></p>
+    <div class="form-actions"><button class="action" id="cancelDelete" type="button">取消</button><button class="action primary" id="confirmDelete" type="button">確定刪除</button></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <noscript>請開啟瀏覽器的 JavaScript，以使用夜宴互動地圖。</noscript>
+</body>
+</html>

@@ -1,0 +1,17 @@
+夜宴地圖＋赤月計算機
+
+此資料夾為可直接使用的靜態網頁，無須安裝、資料庫或伺服器。
+1. 保留整個 yeyan_map 資料夾及 assets 子資料夾。
+2. 使用 Chrome 或 Edge 開啟 index.html。
+3. 若已有夜宴地圖，先備份原檔，再將本資料夾內容合併至原本位置。
+4. 重新整理後，上方應顯示「夜宴地圖／赤月計算機」。
+
+本次功能檔案：index.html、calculator.css、calculator.js、app-tabs.js、map.js。
+赤月計算機依提供的 8 項菜單單價計算，初次使用為空白訂單。
+一般地標、黃點、綠點及赤月訂單使用不同的瀏覽器儲存名稱。
+覆蓋網頁檔案不會清除儲存資料；搬動網頁位置或更換瀏覽器，舊紀錄可能無法沿用。
+更新不會變更 police_map 資料夾，亦不需匯入 SQL 或重啟遊戲伺服器。
+
+測試方式：在交付根目錄執行 node tools/yeyan_map/verify-calculator.cjs。
+所需工具及更多說明見 tools/yeyan_map/README.txt。
+測試使用隔離瀏覽器環境，不修改目前使用中的訂單或地標。

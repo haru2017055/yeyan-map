@@ -1,0 +1,66 @@
+.app-tabs { display:flex; gap:24px; padding:0 28px; flex:none; border-bottom:1px solid var(--line); background:#1c0e13; }
+.app-tab { padding:12px 2px; border:0; border-bottom:2px solid transparent; background:transparent; color:var(--muted); font-size:13px; }
+.app-tab[aria-selected="true"] { color:#e8c786; border-bottom-color:#e8c786; }
+.app-tab:hover { color:#f8e3b6; }
+.calculator-panel { flex:1; min-height:0; overflow:auto; padding:28px; background:radial-gradient(ellipse at top left,#39131c55,transparent 60%),#150b0e; }
+#calculator-panel { --calc-gold:#e8c786; --calc-muted:#c7a5ae; }
+#calculator-panel .calc-content { max-width:1280px; margin:0 auto; }
+#calculator-panel .calc-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:24px; }
+#calculator-panel .calc-eyebrow { color:var(--calc-gold); font-size:11px; letter-spacing:2px; margin:0 0 8px; }
+#calculator-panel .calc-heading h2 { font-size:26px; letter-spacing:4px; margin:0 0 8px; }
+#calculator-panel .calc-caption { color:var(--calc-muted); font-size:13px; line-height:1.7; margin:0; }
+#calculator-panel .calc-layout { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr); gap:28px; align-items:start; }
+#calculator-panel .calc-group { margin-bottom:22px; }
+#calculator-panel .calc-group h3 { color:var(--calc-gold); font-size:14px; font-weight:500; letter-spacing:3px; margin:0 0 12px; }
+#calculator-panel .calc-product-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+#calculator-panel .calc-product { padding:16px; border:1px solid #553039; border-radius:8px; background:#211116; min-width:0; display:flex; flex-direction:column; gap:12px; }
+#calculator-panel .calc-product-name { font-size:15px; line-height:1.5; margin:0; overflow-wrap:anywhere; font-weight:500; }
+#calculator-panel .calc-product-english { display:block; color:var(--calc-muted); font:italic 13px/1.6 Georgia,serif; }
+#calculator-panel .calc-product-buy { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:auto; }
+#calculator-panel .calc-price { color:var(--calc-gold); font-variant-numeric:tabular-nums; }
+#calculator-panel .calc-add { padding:8px 13px; border:1px solid #934052; border-radius:5px; background:#3b1722; font-size:13px; white-space:nowrap; }
+#calculator-panel .calc-add:hover { background:#692136; }
+#calculator-panel .calc-receipt { border-left:1px solid #553039; padding-left:26px; min-width:0; scroll-margin:18px; }
+#calculator-panel .calc-receipt-heading { display:flex; justify-content:space-between; align-items:center; gap:10px; padding-bottom:16px; border-bottom:1px solid #553039; }
+#calculator-panel .calc-receipt-heading h3 { font-size:19px; font-weight:500; margin:0; }
+#calculator-panel #calcItemCount { color:var(--calc-muted); font-size:12px; white-space:nowrap; }
+#calculator-panel .calc-line { padding:16px 0; border-bottom:1px solid #3c232b; }
+#calculator-panel .calc-line-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+#calculator-panel .calc-line-name { overflow-wrap:anywhere; font-size:14px; }
+#calculator-panel .calc-line-price { font-size:14px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+#calculator-panel .calc-line-controls { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; }
+#calculator-panel .calc-unit { color:var(--calc-muted); font-size:12px; }
+#calculator-panel .calc-stepper { display:flex; align-items:center; gap:6px; }
+#calculator-panel .calc-step { width:34px; height:34px; padding:0; background:#31151e; border:1px solid #75404e; border-radius:5px; }
+#calculator-panel .calc-quantity { width:58px; height:34px; padding:3px; text-align:center; font-variant-numeric:tabular-nums; appearance:textfield; }
+#calculator-panel .calc-quantity::-webkit-inner-spin-button { appearance:none; }
+#calculator-panel .calc-empty { color:var(--calc-muted); text-align:center; padding:30px 0; margin:0; }
+#calculator-panel .calc-total { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:24px 0; }
+#calculator-panel #calcTotal { font-size:clamp(26px,3vw,36px); color:var(--calc-gold); font-variant-numeric:tabular-nums; line-height:1.2; white-space:nowrap; }
+#calculator-panel .calc-primary,#calculator-panel .calc-secondary { width:100%; padding:12px; border:1px solid #d85b70; border-radius:6px; background:#aa263e; font-size:14px; }
+#calculator-panel .calc-secondary { background:transparent; border-color:#74404c; margin-top:10px; }
+#calculator-panel .calc-primary:hover { background:#bd304a; }
+#calculator-panel .calc-notice,#calculator-panel .calc-error { margin:12px 0 0; color:var(--calc-muted); font-size:12px; line-height:1.7; overflow-wrap:anywhere; }
+#calculator-panel .calc-notice.warning,#calculator-panel .calc-error { color:#ffc58a; }
+#calculator-panel .calc-copy-label { display:block; margin-top:16px; color:var(--calc-muted); font-size:12px; }
+#calculator-panel .calc-copy-text { min-height:180px; margin-top:8px; font-size:13px; line-height:1.7; }
+#calculator-panel .calc-footer { border-top:1px solid #553039; margin-top:24px; padding-top:16px; color:var(--calc-muted); font-size:12px; }
+#calculator-panel .calc-jump { display:none; }
+@media(max-width:800px) {
+  .app-tabs { padding:0 16px; gap:22px; }
+  .calculator-panel { padding:20px 16px; }
+  #calculator-panel .calc-layout { grid-template-columns:1fr; gap:22px; }
+  #calculator-panel .calc-heading { display:block; margin-bottom:20px; }
+  #calculator-panel .calc-heading h2 { font-size:23px; }
+  #calculator-panel .calc-jump { display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:16px; padding:11px 14px; border:1px solid #8e6940; border-radius:6px; background:#392319; color:var(--calc-gold); }
+  #calculator-panel .calc-receipt { border-left:0; border-top:1px solid #553039; padding:20px 0 0; }
+  #calculator-panel .calc-product { padding:12px; }
+  #calculator-panel .calc-product-name { font-size:14px; }
+  #calculator-panel .calc-product-buy { gap:6px; }
+  #calculator-panel .calc-add { padding:8px 10px; }
+}
+@media(pointer:coarse) {
+  #calculator-panel .calc-step { width:44px; height:44px; }
+  #calculator-panel .calc-quantity { height:44px; font-size:16px; }
+  #calculator-panel .calc-add { min-height:44px; }
+}
